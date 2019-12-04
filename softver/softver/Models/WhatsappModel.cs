@@ -54,7 +54,17 @@ namespace softver.Models
         public void Close_Media()
         {
 
-            IList<IWebElement> clicks = driver.FindElements(By.CssSelector("[title^='Close']"));
+            IWebElement closeMediaButton = driver.FindElement(By.CssSelector("[title^='Close']"));
+            try
+            {
+                closeMediaButton.Click();
+            }
+            catch
+            {
+
+            }
+
+            IList<IWebElement> clicks = driver.FindElements(By.CssSelector("[data-icon='back-light']"));
             //IWebElement web = null;
 
             // int count = 0;
@@ -131,7 +141,7 @@ namespace softver.Models
         {
             List<String> result = new List<String>();
 
-             IList<IWebElement> all = driver.FindElements(By.ClassName("_25Ooe"));
+             IList<IWebElement> all = driver.FindElements(By.ClassName("_3H4MS"));
 
             foreach (IWebElement element in all)
             {
@@ -155,10 +165,10 @@ namespace softver.Models
 
             try
             {
-                IList<IWebElement> all = driver.FindElements(By.ClassName("_25Ooe"));
+                IList<IWebElement> all = driver.FindElements(By.ClassName("_3H4MS"));
                 foreach (IWebElement element in all)
                 {
-                    if (element.Text.ToLower().Contains(group_name.ToLower()))
+                    if (element.Text.ToLower().Equals(group_name.ToLower()))
                     {
                         try
                         {
@@ -175,7 +185,7 @@ namespace softver.Models
 
                 Waiting(0);
 
-                IWebElement query2 = driver.FindElement(By.ClassName("_1WBXd"));
+                IWebElement query2 = driver.FindElement(By.ClassName("_19vo_"));
                 query2.Click();
             }
             catch
@@ -215,7 +225,7 @@ namespace softver.Models
         /// </summary>
         public void Open_All_Media()
         {
-            IList<IWebElement> all123 = driver.FindElements(By.ClassName("_1sYdX"));
+            IList<IWebElement> all123 = driver.FindElements(By.ClassName("_1J99z"));
             foreach (IWebElement element in all123)
             {
                 try
@@ -261,12 +271,14 @@ namespace softver.Models
         public void Open_And_Save_Each_Media(int number_of_medias)
         {
 
-            var element12 = driver.FindElement(By.ClassName("_2Ry6_"));
+            var element12 = driver.FindElement(By.ClassName("grK2C")); // class applied to each image
 
             element12.Click();
 
             IWebElement e = Get_Previous_Click(driver);
+            IWebElement parentBack = e.FindElement(By.XPath("./.."));
             IWebElement e_download = Get_Download_Click(driver);
+            IWebElement e_download_parent = e_download.FindElement(By.XPath("./.."));
 
             for (int j = 0; j < number_of_medias; j++)
             {
@@ -279,6 +291,13 @@ namespace softver.Models
                         if (Is_Waiting())
                         {
                             e.Click();
+                        }
+
+                        // if media doesn't exist anymore, download button is disabled
+                        if (e_download_parent.GetAttribute("class").Contains("_2-xTw"))
+                        {
+                            e.Click();
+                            continue;
                         }
 
                         e_download.Click();
@@ -297,7 +316,12 @@ namespace softver.Models
 
 
                 }
-
+                
+                // if contains _2fw_A, then back button is disabled, meaning we are on the last media
+                if (parentBack.GetAttribute("class").Contains("_2fw_A"))
+                {
+                    break;
+                }
             }
         }
 
@@ -391,7 +415,7 @@ namespace softver.Models
         private IWebElement Get_Previous_Click(IWebDriver driver)
         {
 
-            IList<IWebElement> clicks = driver.FindElements(By.CssSelector("[title^='Previous']"));
+            IList<IWebElement> clicks = driver.FindElements(By.CssSelector("[data-icon='chevron-left']"));
             IWebElement web = null;
 
             foreach (IWebElement element in clicks)
